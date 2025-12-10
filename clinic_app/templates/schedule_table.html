@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    body {
+        background-color: #f8f7f4;
+        color: #4a3f35;
+        font-family: "Segoe UI", "Noto Sans TC", sans-serif;
+    }
+
+    .table-wrapper {
+        background: #ffffff;
+        padding: 28px;
+        border-radius: 18px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        border: 1px solid #e8e2d8;
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    .week-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .week-nav button {
+        background-color: #c8a985;
+        border: none;
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 8px;
+        transition: 0.2s;
+    }
+
+    .week-nav button:hover {
+        background-color: #b89672;
+    }
+
+    .week-label {
+        font-size: 18px;
+        font-weight: bold;
+        color: #6a533f;
+    }
+
+    .table {
+        color: #4a3f35;
+        border-color: #efe9e1;
+    }
+
+    .table thead th {
+        background: linear-gradient(180deg, #f9f5ee, #f3ece2);
+        color: #5b4a3a;
+        font-weight: 700;
+        font-size: 15px;
+        padding: 14px 0;
+        border-bottom: 2px solid #e3d7c7;
+    }
+
+    .slot-header {
+        background: #faf7f2;
+        font-weight: 700;
+        border-right: 2px solid #eadfcc;
+        color: #6b5848;
+    }
+
+    .slot-cell {
+        height: 165px;
+        vertical-align: top;
+        background-color: #ffffff;
+        border: 1px solid #f1ece6;
+        border-radius: 12px;
+        padding: 10px;
+        transition: all 0.25s ease;
+    }
+
+    .slot-cell:hover {
+        background-color: #fdf8f2;
+        box-shadow: inset 0 0 10px rgba(200, 169, 133, 0.25);
+        transform: translateY(-2px);
+    }
+
+    .slot-full {
+        background-color: #efefef !important;
+        color: #666 !important;
+        border: 1px solid #dcdcdc !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    .department {
+        font-weight: 700;
+        color: #6a533f;
+        font-size: 16px;
+    }
+
+    .doctor {
+        font-size: 14px;
+        color: #8b7768;
+    }
+
+    .quota {
+        font-size: 14px;
+        color: #8c6c56;
+        margin-top: 4px;
+    }
+
+    .progress {
+        height: 8px;
+        background: #eee2d5;
+        border-radius: 6px;
+        margin-top: 6px;
+    }
+
+    .progress-bar {
+        background-color: #c8a985;
+        border-radius: 6px;
+    }
+
+    .full-text {
+        color: #a35d5d;
+        font-weight: bold;
+        font-size: 15px;
+        margin-top: 6px;
+    }
+
+    .btn-appoint {
+        background-color: #c8a985;
+        border: none;
+        color: white;
+        border-radius: 6px;
+        padding: 6px 12px;
+        margin-top: 6px;
+        width: 100%;
+        transition: 0.2s ease;
+        font-size: 13px;
+    }
+
+    .btn-appoint:hover {
+        background-color: #b89672;
+    }
+</style>
+
+<h2 class="text-center mb-4">一週門診總表</h2>
+
+<div class="table-wrapper">
+
+    <div class="week-nav">
+        <a href="{{ url_for('schedule_table', week_start=prev_week_start) }}">
+            <button>← 上一週</button>
+        </a>
+
+        <div class="week-label">{{ week_label }}</div>
+
+        <a href="{{ url_for('schedule_table', week_start=next_week_start) }}">
+            <button>下一週 →</button>
+        </a>
+    </div>
+
+    <table class="table table-bordered text-center align-middle">
+        <thead>
+            <tr>
+                <th>時段 / 星期</th>
+                {% for d in days %}
+                    <th>
+                        {{ d.label }}<br>
+                        <span class="text-muted" style="font-size: 12px;">
+                            {{ d.date.strftime('%m/%d') }}
+                        </span>
+                    </th>
+                {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for slot in time_slots %}
+            <tr>
+                <th class="slot-header">{{ slot }}</th>
+
+                {% for d in days %}
+                    {% set key = d.date_str ~ '_' ~ slot %}
+                    {% set item = schedule_map.get(key) %}
+
+                    {% if not item %}
+                        <td class="slot-cell">
+                            <span class="text-muted">— 無門診 —</span>
+                        </td>
+
+                    {% else %}
+                        {% set remain = item.remaining_quota %}
+                        {% set maxq = item.max_quota %}
+                        {% set used = maxq - remain %}
+                        {% set percent = (used / maxq * 100) | int %}
+                        {% set full = (remain == 0) %}
+
+                        <td class="slot-cell {% if full %}slot-full{% endif %}">
+
+                            <div class="department">{{ item.department }}</div>
+                            <div class="doctor">{{ item.doctor }}</div>
+
+                            {% if full %}
+                                <div class="full-text">已額滿</div>
+
+                            {% else %}
+                                <div class="quota">名額：{{ remain }} / {{ maxq }}</div>
+
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: {{ percent }}%;"></div>
+                                </div>
+
+                                <!-- ⭐⭐ 預約按鈕 -->
+                                <form action="{{ url_for('quick_book') }}" method="POST">
+                                    <input type="hidden" name="schedule_id" value="{{ item.schedule_id }}">
+                                    <button class="btn-appoint">預約</button>
+                                </form>
+
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

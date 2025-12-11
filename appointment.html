@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-3">預約門診</h2>
+
+<form method="get" class="row g-3 mb-4">
+  <div class="col-auto">
+    <label class="col-form-label">選擇日期：</label>
+  </div>
+  <div class="col-auto">
+    <input
+      type="date"
+      class="form-control"
+      name="date"
+      value="{{ target_date.strftime('%Y-%m-%d') }}"
+      onchange="this.form.submit()"
+    />
+  </div>
+</form>
+
+{% if schedules %}
+<table class="table table-bordered align-middle">
+  <thead>
+    <tr>
+      <th>時段</th>
+      <th>科別</th>
+      <th>醫師</th>
+      <th>剩餘名額</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for s in schedules %}
+    <tr>
+      <td>{{ s.time_slot }}</td>
+      <td>{{ s.department }}</td>
+      <td>{{ s.doctor_name }}</td>
+      <td>
+        {% if s.remaining_quota > 0 %}
+          {{ s.remaining_quota }}
+        {% else %}
+          <span class="text-danger">已滿</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if s.remaining_quota > 0 %}
+        <form method="post" style="display:inline;">
+          <input type="hidden" name="schedule_id" value="{{ s.schedule_id }}" />
+          <button type="submit" class="btn btn-success btn-sm">預約</button>
+        </form>
+        {% else %}
+          <button class="btn btn-secondary btn-sm" disabled>無名額</button>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>此日期目前尚無門診排程。</p>
+{% endif %}
+{% endblock %}

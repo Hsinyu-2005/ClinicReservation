@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    body {
+        background-color: #f8f7f4;
+        color: #4a3f35;
+        font-family: "Segoe UI", "Noto Sans TC", sans-serif;
+    }
+
+    .title {
+        font-weight: 700;
+        color: #6a533f;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .appt-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 18px 22px;
+        margin-bottom: 18px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        border: 1px solid #e8e2d8;
+        transition: 0.25s;
+    }
+
+    .appt-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+    }
+
+    .appt-title {
+        font-size: 18px;
+        color: #6a533f;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .appt-info {
+        font-size: 14px;
+        color: #7a6a5a;
+        line-height: 1.6;
+    }
+
+    .appt-status {
+        font-weight: 700;
+        color: #8c6c56;
+    }
+
+    .no-data {
+        text-align: center;
+        margin-top: 40px;
+        font-size: 16px;
+        color: #8b7a6a;
+    }
+</style>
+
+<h2 class="title">我的預約紀錄</h2>
+
+{% if appointments %}
+    {% for a in appointments %}
+    <div class="appt-card">
+
+        <div class="appt-title">
+            {{ a.schedule.department }} ｜ {{ a.schedule.doctor_name }}
+        </div>
+
+        <div class="appt-info">
+            <strong> 日期：</strong> {{ a.schedule.date }}<br>
+            <strong> 時段：</strong> {{ a.schedule.time_slot }}<br>
+            <strong> 狀態：</strong>
+            <span class="appt-status">{{ a.status }}</span><br>
+            <strong> 建立時間：</strong> {{ a.created_at.strftime('%Y-%m-%d %H:%M') }}
+        </div>
+
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="no-data">目前尚無預約紀錄。</p>
+{% endif %}
+
+{% endblock %}

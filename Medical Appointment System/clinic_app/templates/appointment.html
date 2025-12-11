@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .card {
+        border-radius: 14px;
+        background: #fffaf5;
+        border: 1px solid #e8dfd5;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+    .card-title {
+        color: #6a533f;
+        font-weight: 700;
+    }
+    .info-label {
+        font-weight: 600;
+        color: #8b7768;
+    }
+    .btn-confirm {
+        background-color: #c8a985;
+        border: none;
+        color: white;
+        padding: 10px 12px;
+        border-radius: 6px;
+        transition: 0.2s;
+    }
+    .btn-confirm:hover {
+        background-color: #b89672;
+    }
+</style>
+
+<h2 class="mb-4">預約門診</h2>
+
+{% if not schedule %}
+    <p class="text-danger">查無此門診，請回到門診總表重新選擇。</p>
+    <a href="/schedule_table" class="btn btn-secondary">返回</a>
+{% else %}
+
+<div class="card p-4" style="max-width: 520px;">
+    <h4 class="card-title mb-3">{{ schedule.department }} — {{ schedule.doctor_name }}</h4>
+
+    <p>
+        <span class="info-label"> 日期：</span> {{ schedule.date }}<br>
+        <span class="info-label"> 時段：</span> {{ schedule.time_slot }}<br>
+        <span class="info-label"> 剩餘名額：</span>
+        {% if schedule.remaining_quota > 0 %}
+            {{ schedule.remaining_quota }}
+        {% else %}
+            <span class="text-danger">已滿</span>
+        {% endif %}
+    </p>
+
+    {% if schedule.remaining_quota > 0 %}
+    <form method="post">
+        <input type="hidden" name="schedule_id" value="{{ schedule.schedule_id }}">
+        <button class="btn-confirm w-100">確認預約</button>
+    </form>
+    {% else %}
+        <button class="btn btn-secondary w-100" disabled>不可預約（已滿）</button>
+    {% endif %}
+</div>
+
+{% endif %}
+
+{% endblock %}

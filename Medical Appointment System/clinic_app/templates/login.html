@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .login-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 30px 34px;
+        max-width: 420px;
+        margin: auto;
+        border: 1px solid #e8e2d8;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+
+    .login-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #6a533f;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .form-label {
+        font-size: 15px;
+        margin-bottom: 6px;
+        color: #6f5a49;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccbca9;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+
+    .btn-login {
+        background-color: #c8a985;
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        margin-top: 18px;
+        font-size: 16px;
+        transition: 0.2s;
+    }
+
+    .btn-login:hover {
+        background-color: #b89672;
+    }
+</style>
+
+<div class="login-card">
+
+    <div class="login-title">會員登入</div>
+
+    <form method="POST">
+        <label class="form-label">帳號：</label>
+        <input type="text" name="username" class="form-control" required>
+
+        <label class="form-label" style="margin-top:14px;">密碼：</label>
+        <input type="password" name="password" class="form-control" required>
+
+        <button class="btn-login">登入</button>
+    </form>
+
+</div>
+
+{% endblock %}

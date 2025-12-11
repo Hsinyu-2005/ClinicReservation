@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .welcome-box {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid #e8e2d8;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        max-width: 700px;
+        margin: auto;
+    }
+
+    .welcome-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #6a533f;
+        margin-bottom: 16px;
+    }
+
+    .welcome-text {
+        font-size: 16px;
+        color: #7d6a59;
+        margin-bottom: 26px;
+    }
+
+    .btn-main {
+        background-color: #c8a985;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .btn-main:hover {
+        background-color: #b89672;
+    }
+</style>
+
+<div class="welcome-box">
+    <div class="welcome-title">歡迎使用診所預約系統</div>
+
+    <div class="welcome-text">
+        請選擇您想使用的服務。<br>
+        您可以查看門診表、預約門診、查詢個人預約紀錄。
+    </div>
+
+    <a class="btn-main" href="{{ url_for('schedule_table') }}">查看門診表</a>
+</div>
+
+{% endblock %}

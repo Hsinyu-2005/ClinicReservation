@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-3">我的預約紀錄</h2>
+
+{% if appointments %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>建立時間</th>
+      <th>日期</th>
+      <th>時段</th>
+      <th>科別</th>
+      <th>醫師</th>
+      <th>狀態</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in appointments %}
+    <tr>
+      <td>{{ a.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+      <td>{{ a.schedule.date.strftime('%Y-%m-%d') }}</td>
+      <td>{{ a.schedule.time_slot }}</td>
+      <td>{{ a.schedule.department }}</td>
+      <td>{{ a.schedule.doctor_name }}</td>
+      <td>{{ a.status }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>目前沒有預約紀錄。</p>
+{% endif %}
+{% endblock %}
